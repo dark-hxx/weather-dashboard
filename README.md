@@ -20,7 +20,7 @@
 
 1. 克隆项目
 ```bash
-git clone https://github.com/your-username/weather-dashboard.git
+git clone https://github.com/dark-hxx/weather-dashboard
 cd weather-dashboard
 ```
 
@@ -37,40 +37,41 @@ const QWEATHER_KEY = window.QWEATHER_KEY || '你的API Key';
 
 ## 部署教程
 
-### Cloudflare Pages 部署
+本项目使用 GitHub Actions 自动部署到 Cloudflare Pages 和 Vercel。
 
-1. Fork 本仓库到你的 GitHub
+### 配置 GitHub Secrets
 
-2. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com)
+在你的 GitHub 仓库中配置以下 Secrets（Settings → Secrets and variables → Actions）：
 
-3. 进入 **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
+| Secret 名称 | 说明 | 获取方式 |
+|------------|------|---------|
+| `QWEATHER_KEY` | 和风天气 API Key | [和风天气开发平台](https://dev.qweather.com/) |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API Token | [Cloudflare API Tokens](https://dash.cloudflare.com/profile/api-tokens)，需要 `Cloudflare Pages:Edit` 权限 |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare 账户 ID | Cloudflare Dashboard 右侧边栏 |
+| `VERCEL_TOKEN` | Vercel 访问令牌 | [Vercel Tokens](https://vercel.com/account/tokens) |
 
-4. 选择你 Fork 的仓库，构建设置保持默认即可
+### 首次部署准备
 
-5. 部署完成后，进入项目设置添加环境变量：
-   - **Settings** → **Environment variables**
-   - 添加 `QWEATHER_KEY` 变量，值为你的和风天气 API Key
+#### Cloudflare Pages
+1. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com)
+2. 进入 **Workers & Pages** → **Create** → **Pages** → **Direct Upload**
+3. 创建一个名为 `weather-dashboard` 的项目（上传任意文件即可）
+4. 后续推送代码会自动通过 GitHub Actions 部署
 
-6. 重新部署生效
+#### Vercel
+1. 登录 [Vercel](https://vercel.com)，导入本仓库
+2. 首次部署后，后续推送代码会自动通过 GitHub Actions 部署
 
-### Vercel 部署
+### 手动部署
 
-1. Fork 本仓库到你的 GitHub
-
-2. 登录 [Vercel](https://vercel.com)，点击 **Add New Project**
-
-3. 导入你 Fork 的仓库
-
-4. 配置环境变量：
-   - 点击 **Environment Variables**
-   - 添加变量 `QWEATHER_KEY`，值为你的和风天气 API Key
-
-5. 点击 **Deploy** 完成部署
+推送到 `main` 分支会自动触发部署，也可以在 GitHub Actions 页面手动触发。
 
 ## 项目结构
 
 ```
 weather-dashboard/
+├── .github/workflows/  # GitHub Actions
+│   └── deploy.yml      # 自动部署配置
 ├── public/             # 静态资源目录
 │   ├── index.html      # 主页面
 │   ├── style.css       # 样式文件
