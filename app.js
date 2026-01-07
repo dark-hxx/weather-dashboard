@@ -192,13 +192,48 @@ async function loadWeatherByIP() {
     showLoading();
 
     try {
-        // 使用 ip-api.com 获取IP定位信息
-        const ipResponse = await fetch('http://ip-api.com/json/?lang=zh-CN');
-        if (!ipResponse.ok) throw new Error('IP定位失败');
+        // 尝试多个 IP 定位服务（按优先级）
+        let ipData = null;
 
-        const ipData = await ipResponse.json();
+        // 1. 首选：ipapi.co（支持 HTTPS，免费版每天 1000 次）
+        try {
+            const response = await fetch('https://ipapi.co/json/');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.city) {
+                    ipData = {
+                        city: data.city,
+                        regionName: data.region,
+                        lat: data.latitude,
+                        lon: data.longitude
+                    };
+                }
+            }
+        } catch (e) {
+            console.warn('ipapi.co 请求失败，尝试备用服务');
+        }
 
-        if (ipData.status !== 'success') {
+        // 2. 备用：ip-api.com（仅 HTTP，本地开发可用）
+        if (!ipData && location.protocol === 'http:') {
+            try {
+                const response = await fetch('http://ip-api.com/json/?lang=zh-CN');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        ipData = {
+                            city: data.city,
+                            regionName: data.regionName,
+                            lat: data.lat,
+                            lon: data.lon
+                        };
+                    }
+                }
+            } catch (e) {
+                console.warn('ip-api.com 请求失败');
+            }
+        }
+
+        if (!ipData) {
             throw new Error('无法获取位置信息');
         }
 
