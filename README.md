@@ -1,0 +1,147 @@
+# 天气喵 🐱
+
+一个简洁可爱的天气查询应用，基于和风天气 API。
+
+![preview](https://img.shields.io/badge/License-MIT-blue.svg)
+
+## 功能特性
+
+- 🌍 **IP 自动定位** - 根据访问 IP 自动获取当地天气
+- 🔍 **城市搜索** - 支持模糊搜索切换城市
+- 🌤️ **实时天气** - 温度、体感、湿度、风速、能见度、气压
+- 📅 **3天预报** - 未来天气趋势一目了然
+- 🎨 **主题切换** - 浅色/深色/跟随系统
+- ✨ **毛玻璃 UI** - 现代化视觉设计
+- 📱 **响应式** - 完美适配手机和桌面
+
+## 快速开始
+
+### 本地运行
+
+1. 克隆项目
+```bash
+git clone https://github.com/your-username/weather-meow.git
+cd weather-meow
+```
+
+2. 配置 API Key
+
+编辑 `app.js` 第 3 行，填入你的和风天气 API Key：
+```javascript
+const QWEATHER_KEY = window.QWEATHER_KEY || '你的API Key';
+```
+
+3. 打开 `index.html` 即可使用
+
+> 获取 API Key: [和风天气开发平台](https://dev.qweather.com/)
+
+## 部署教程
+
+### Vercel 部署
+
+1. Fork 本仓库到你的 GitHub
+
+2. 登录 [Vercel](https://vercel.com)，点击 "New Project"
+
+3. 导入你 Fork 的仓库
+
+4. 配置环境变量：
+   - 点击 "Environment Variables"
+   - 添加变量 `QWEATHER_KEY`，值为你的和风天气 API Key
+
+5. 点击 "Deploy" 完成部署
+
+6. **重要**：由于是纯静态项目，需要创建一个简单的边缘函数来注入环境变量
+
+创建 `api/config.js`：
+```javascript
+export default function handler(req, res) {
+  const html = `window.QWEATHER_KEY = "${process.env.QWEATHER_KEY}";`;
+  res.setHeader('Content-Type', 'application/javascript');
+  res.status(200).send(html);
+}
+```
+
+修改 `index.html` 中的环境变量脚本：
+```html
+<script src="/api/config"></script>
+```
+
+### Cloudflare Pages 部署
+
+1. Fork 本仓库到你的 GitHub
+
+2. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com)
+
+3. 进入 "Workers & Pages" → "Create application" → "Pages"
+
+4. 连接 GitHub 并选择仓库
+
+5. 构建设置：
+   - 构建命令：留空
+   - 构建输出目录：`/`
+
+6. 点击 "Save and Deploy"
+
+7. 部署完成后，进入项目设置：
+   - "Settings" → "Environment variables"
+   - 添加 `QWEATHER_KEY` 变量
+
+8. **配置 Functions**（用于注入环境变量）
+
+创建 `functions/api/config.js`：
+```javascript
+export async function onRequest(context) {
+  const script = `window.QWEATHER_KEY = "${context.env.QWEATHER_KEY}";`;
+  return new Response(script, {
+    headers: { 'Content-Type': 'application/javascript' }
+  });
+}
+```
+
+修改 `index.html` 中的环境变量脚本：
+```html
+<script src="/api/config"></script>
+```
+
+9. 重新部署生效
+
+## 项目结构
+
+```
+weather-meow/
+├── index.html      # 主页面
+├── style.css       # 样式文件
+├── app.js          # 业务逻辑
+├── favicon.svg     # 网站图标
+├── README.md       # 说明文档
+└── LICENSE         # 开源协议
+```
+
+## 技术栈
+
+- 原生 HTML/CSS/JavaScript
+- 和风天气 API
+- IP-API（IP 定位）
+- CSS 变量 + 媒体查询（主题切换）
+- Glassmorphism（毛玻璃设计）
+
+## API 说明
+
+本项目使用以下 API：
+
+| API | 用途 | 文档 |
+|-----|------|------|
+| 和风天气 GeoAPI | 城市搜索 | [文档](https://dev.qweather.com/docs/api/geoapi/) |
+| 和风天气 实时天气 | 当前天气 | [文档](https://dev.qweather.com/docs/api/weather/weather-now/) |
+| 和风天气 逐日预报 | 3天预报 | [文档](https://dev.qweather.com/docs/api/weather/weather-daily-forecast/) |
+| IP-API | IP 定位 | [文档](https://ip-api.com/docs/) |
+
+## 开源协议
+
+[MIT License](./LICENSE)
+
+## 致谢
+
+- [和风天气](https://www.qweather.com/) - 天气数据支持
+- [IP-API](https://ip-api.com/) - IP 定位服务
