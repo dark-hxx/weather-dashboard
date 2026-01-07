@@ -90,15 +90,8 @@
         </main>
     </div>
 
-    <!-- 环境变量注入（部署时由服务端替换） -->
-    <script>
-        // Vercel/Cloudflare 部署时会替换此变量
-        window.QWEATHER_KEY = "%QWEATHER_KEY%";
-        // 如果未替换，则置空让 app.js 使用默认值
-        if (window.QWEATHER_KEY === "%QWEATHER_KEY%") {
-            window.QWEATHER_KEY = "";
-        }
-    </script>
+    <!-- 环境变量注入（通过 Cloudflare Function） -->
+    <script src="/api/config"></script>
     <script src="app.js"></script>
 </body>
 </html>
