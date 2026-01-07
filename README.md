@@ -20,52 +20,22 @@
 
 1. 克隆项目
 ```bash
-git clone https://github.com/your-username/weather-meow.git
-cd weather-meow
+git clone https://github.com/your-username/weather-dashboard.git
+cd weather-dashboard
 ```
 
 2. 配置 API Key
 
-编辑 `app.js` 第 3 行，填入你的和风天气 API Key：
+编辑 `public/app.js` 第 3 行，填入你的和风天气 API Key：
 ```javascript
 const QWEATHER_KEY = window.QWEATHER_KEY || '你的API Key';
 ```
 
-3. 打开 `index.html` 即可使用
+3. 打开 `public/index.html` 即可使用
 
 > 获取 API Key: [和风天气开发平台](https://dev.qweather.com/)
 
 ## 部署教程
-
-### Vercel 部署
-
-1. Fork 本仓库到你的 GitHub
-
-2. 登录 [Vercel](https://vercel.com)，点击 "New Project"
-
-3. 导入你 Fork 的仓库
-
-4. 配置环境变量：
-   - 点击 "Environment Variables"
-   - 添加变量 `QWEATHER_KEY`，值为你的和风天气 API Key
-
-5. 点击 "Deploy" 完成部署
-
-6. **重要**：由于是纯静态项目，需要创建一个简单的边缘函数来注入环境变量
-
-创建 `api/config.js`：
-```javascript
-export default function handler(req, res) {
-  const html = `window.QWEATHER_KEY = "${process.env.QWEATHER_KEY}";`;
-  res.setHeader('Content-Type', 'application/javascript');
-  res.status(200).send(html);
-}
-```
-
-修改 `index.html` 中的环境变量脚本：
-```html
-<script src="/api/config"></script>
-```
 
 ### Cloudflare Pages 部署
 
@@ -73,49 +43,48 @@ export default function handler(req, res) {
 
 2. 登录 [Cloudflare Dashboard](https://dash.cloudflare.com)
 
-3. 进入 "Workers & Pages" → "Create application" → "Pages"
+3. 进入 **Workers & Pages** → **Create** → **Pages** → **Connect to Git**
 
-4. 连接 GitHub 并选择仓库
+4. 选择你 Fork 的仓库，构建设置保持默认即可
 
-5. 构建设置：
-   - 构建命令：留空
-   - 构建输出目录：`/`
+5. 部署完成后，进入项目设置添加环境变量：
+   - **Settings** → **Environment variables**
+   - 添加 `QWEATHER_KEY` 变量，值为你的和风天气 API Key
 
-6. 点击 "Save and Deploy"
+6. 重新部署生效
 
-7. 部署完成后，进入项目设置：
-   - "Settings" → "Environment variables"
-   - 添加 `QWEATHER_KEY` 变量
+### Vercel 部署
 
-8. **配置 Functions**（用于注入环境变量）
+1. Fork 本仓库到你的 GitHub
 
-创建 `functions/api/config.js`：
-```javascript
-export async function onRequest(context) {
-  const script = `window.QWEATHER_KEY = "${context.env.QWEATHER_KEY}";`;
-  return new Response(script, {
-    headers: { 'Content-Type': 'application/javascript' }
-  });
-}
-```
+2. 登录 [Vercel](https://vercel.com)，点击 **Add New Project**
 
-修改 `index.html` 中的环境变量脚本：
-```html
-<script src="/api/config"></script>
-```
+3. 导入你 Fork 的仓库
 
-9. 重新部署生效
+4. 配置环境变量：
+   - 点击 **Environment Variables**
+   - 添加变量 `QWEATHER_KEY`，值为你的和风天气 API Key
+
+5. 点击 **Deploy** 完成部署
 
 ## 项目结构
 
 ```
-weather-meow/
-├── index.html      # 主页面
-├── style.css       # 样式文件
-├── app.js          # 业务逻辑
-├── favicon.svg     # 网站图标
-├── README.md       # 说明文档
-└── LICENSE         # 开源协议
+weather-dashboard/
+├── public/             # 静态资源目录
+│   ├── index.html      # 主页面
+│   ├── style.css       # 样式文件
+│   ├── app.js          # 业务逻辑
+│   └── favicon.svg     # 网站图标
+├── functions/          # Cloudflare Pages Functions
+│   └── api/
+│       └── config.js   # 环境变量注入
+├── api/                # Vercel Serverless Functions
+│   └── config.js       # 环境变量注入
+├── wrangler.json       # Cloudflare 配置
+├── vercel.json         # Vercel 配置
+├── README.md           # 说明文档
+└── LICENSE             # 开源协议
 ```
 
 ## 技术栈
