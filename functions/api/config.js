@@ -1,6 +1,6 @@
 // Cloudflare Pages Function - 注入环境变量
 export async function onRequest(context) {
-    const key = context.env.QWEATHER_KEY || '';
+    const key = '8bc2cd24dc914a63a81929657f780bd8';
 
     const script = `window.QWEATHER_KEY = "${key}";`;
 

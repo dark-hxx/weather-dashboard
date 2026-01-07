@@ -4,7 +4,7 @@ export const config = {
 };
 
 export default function handler(request) {
-    const key = process.env.QWEATHER_KEY || '';
+    const key = '8bc2cd24dc914a63a81929657f780bd8';
 
     const script = `window.QWEATHER_KEY = "${key}";`;
 
